@@ -3,8 +3,8 @@ description: A Helm chart for Tekton Custom Tasks
 home: https://github.com/KubeRocketCI/tekton-custom-task
 name: tekton-custom-task
 type: application
-version: 0.0.1
-appVersion: 0.0.1
+version: 0.1.0
+appVersion: 0.1.0
 keywords:
   - tekton
   - pipeline
@@ -20,8 +20,8 @@ annotations:
   artifacthub.io/license: Apache-2.0
   artifacthub.io/operator: "true"
   artifacthub.io/images: |
-    - name: tekton-custom-task:0.0.1
-      image: KubeRocketCI/tekton-custom-task:0.0.1
+    - name: tekton-custom-task:0.1.0-SNAPSHOT.4
+      image: epamedp/tekton-custom-task:0.1.0-SNAPSHOT.4
   artifacthub.io/operatorCapabilities: Full Lifecycle
   artifacthub.io/crds: |
   artifacthub.io/crdsExamples: |
