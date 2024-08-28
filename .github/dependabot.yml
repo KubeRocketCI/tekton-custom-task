@@ -11,3 +11,5 @@ updates:
       interval: "weekly"
     commit-message:
       prefix: "chore: "
+    # only require security updates
+    open-pull-requests-limit: 0
