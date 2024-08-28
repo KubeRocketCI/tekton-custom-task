@@ -1,0 +1,52 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: edp-{{ .Values.name }}-{{ .Release.Namespace }}-role
+  labels:
+    {{- include "tekton-custom-task.labels" . | nindent 4 }}
+rules:
+- apiGroups:
+  - edp.epam.com
+  resources:
+  - approvaltasks
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - edp.epam.com
+  resources:
+  - approvaltasks/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - edp.epam.com
+  resources:
+  - approvaltasks/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - tekton.dev
+  resources:
+  - customruns
+  verbs:
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - tekton.dev
+  resources:
+  - customruns/status
+  verbs:
+  - get
+  - patch
+  - update

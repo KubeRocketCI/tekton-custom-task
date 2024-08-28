@@ -1,0 +1,28 @@
+apiVersion: v2
+description: A Helm chart for Tekton Custom Tasks
+home: https://github.com/KubeRocketCI/tekton-custom-task
+name: tekton-custom-task
+type: application
+version: 0.0.1
+appVersion: 0.0.1
+keywords:
+  - tekton
+  - pipeline
+maintainers:
+  - name: epmd-edp
+    email: SupportEPMD-EDP@epam.com
+    url: https://solutionshub.epam.com/solution/epam-delivery-platform
+  - name: sergk
+    url: https://github.com/SergK
+sources:
+  - https://github.com/KubeRocketCI/tekton-custom-task
+annotations:
+  artifacthub.io/license: Apache-2.0
+  artifacthub.io/operator: "true"
+  artifacthub.io/images: |
+    - name: tekton-custom-task:0.0.1
+      image: KubeRocketCI/tekton-custom-task:0.0.1
+  artifacthub.io/operatorCapabilities: Full Lifecycle
+  artifacthub.io/crds: |
+  artifacthub.io/crdsExamples: |
+  artifacthub.io/links: |

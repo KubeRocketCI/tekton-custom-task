@@ -1,0 +1,27 @@
+# permissions for end users to edit approvaltasks.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/name: tekton-custom-task
+    app.kubernetes.io/managed-by: kustomize
+  name: approvaltask-editor-role
+rules:
+- apiGroups:
+  - edp.epam.com
+  resources:
+  - approvaltasks
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - edp.epam.com
+  resources:
+  - approvaltasks/status
+  verbs:
+  - get

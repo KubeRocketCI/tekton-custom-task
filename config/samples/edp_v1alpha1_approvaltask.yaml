@@ -1,0 +1,9 @@
+apiVersion: edp.epam.com/v1alpha1
+kind: ApprovalTask
+metadata:
+  labels:
+    app.kubernetes.io/name: tekton-custom-task
+    app.kubernetes.io/managed-by: kustomize
+  name: approvaltask-sample
+spec:
+  # TODO(user): Add fields here
