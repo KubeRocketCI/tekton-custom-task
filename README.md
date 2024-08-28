@@ -1,114 +1,148 @@
-# tekton-custom-task
-// TODO(user): Add simple overview of use/purpose
+# Tekton Custom Task
 
-## Description
-// TODO(user): An in-depth paragraph about your project and overview of use
+## Introduction
+
+Tekton Custom Task extends Kubernetes and Tekton capabilities by providing custom task implementations.
+These custom tasks are designed to facilitate complex workflows that standard Tekton tasks may not cover,
+making it a powerful tool for DevOps teams looking to extend their CI/CD pipelines with custom logic.
+
+## Project Structure
+
+- **api/v1alpha1/**: Contains the API definitions for the custom tasks, including the structure and validation of custom resource definitions (CRDs).
+- **cmd/**: Hosts the main application entry point and the command-line interface setup.
+- **config/**: Includes Kubernetes configuration files for deploying the custom tasks, such as CRDs, RBAC rules, and sample configurations.
+- **docs/**: Provides detailed documentation on the API and usage examples.
+- **deploy-templates/**: Contains Helm chart templates for deploying the custom tasks controller.
 
 ## Getting Started
 
-### Prerequisites
-- go version v1.21.0+
-- docker version 17.03+.
-- kubectl version v1.11.3+.
-- Access to a Kubernetes v1.11.3+ cluster.
+To get started with Tekton Custom Task, ensure you have Kubernetes and Tekton Pipelines installed in your environment. Follow these steps to deploy a custom task:
 
-### To Deploy on the cluster
-**Build and push your image to the location specified by `IMG`:**
+1. Clone the repository to your local environment.
+2. Navigate to the `config/` directory.
+3. Apply the CRDs to your Kubernetes cluster:
 
-```sh
-make docker-build docker-push IMG=<some-registry>/tekton-custom-task:tag
+   ```bash
+   kubectl apply -f config/crd/bases/
+   ```
+
+4. Deploy the custom tasks using:
+
+   ```bash
+   kubectl apply -f config/samples/
+   ```
+
+Below is an example of how to define a custom task in your Tekton pipeline:
+
+```yaml
+apiVersion: edp.epam.com/v1alpha1
+kind: ApprovalTask
+metadata:
+  name: approvaltask-sample
+  labels:
+    app.kubernetes.io/name: tekton-custom-task
+    app.kubernetes.io/managed-by: kustomize
+spec:
+  action: Pending
+  description: "Approval required for the next step in the pipeline."
 ```
 
-**NOTE:** This image ought to be published in the personal registry you specified.
-And it is required to have access to pull the image from the working environment.
-Make sure you have the proper permission to the registry if the above commands don’t work.
+This example demonstrates how to run a `CustomTask` named `example-custom-task` within a Tekton pipeline.
 
-**Install the CRDs into the cluster:**
+## Usage
 
-```sh
-make install
+This set of instructions guides you through the process of creating a custom `ApprovalTask` and incorporating it into a Tekton pipeline to serve as an approval step.
+
+To integrate the `ApprovalTask` into your CI/CD pipelines, follow these steps to define the custom task and use it within a Tekton pipeline.
+
+### Defining an `ApprovalTask`
+
+Create an `ApprovalTask` definition by preparing a YAML file named `approvaltask.yaml` with the contents below:
+
+```yaml
+apiVersion: edp.epam.com/v1alpha1
+kind: ApprovalTask
+metadata:
+  name: approvaltask-example
+spec:
+  action: Pending
+  description: "Approval required for the next deployment phase."
 ```
 
-**Deploy the Manager to the cluster with the image specified by `IMG`:**
+This YAML snippet creates an `ApprovalTask` resource named `approvaltask-example`. The task is initially set to a `Pending` state, indicating it awaits approval, and it includes a description to provide context for the approval required.
 
-```sh
-make deploy IMG=<some-registry>/tekton-custom-task:tag
+### Using the `ApprovalTask` in a Tekton Pipeline
+
+Incorporate the `ApprovalTask` within a Tekton pipeline by defining both a `Pipeline` and a `PipelineRun`.
+
+#### Define the Pipeline
+
+Create a file named `pipeline.yaml` with the following content:
+
+```yaml
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: example-pipeline
+spec:
+  tasks:
+    - name: approval-task
+      taskRef:
+        apiVersion: edp.epam.com/v1alpha1
+        kind: ApprovalTask
+        name: approvaltask-example
 ```
 
-> **NOTE**: If you encounter RBAC errors, you may need to grant yourself cluster-admin
-privileges or be logged in as admin.
+This pipeline, named `example-pipeline`, contains a single task named `approval-task`. This task references your previously defined `ApprovalTask` (`approvaltask-example`).
 
-**Create instances of your solution**
-You can apply the samples (examples) from the config/sample:
+#### Define the PipelineRun
 
-```sh
-kubectl apply -k config/samples/
+To initiate the pipeline execution, define a `PipelineRun` in a file named `pipeline-run.yaml` with the contents below:
+
+```yaml
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  name: example-pipeline-run
+spec:
+  pipelineRef:
+    name: example-pipeline
 ```
 
->**NOTE**: Ensure that the samples has default values to test it out.
+This `PipelineRun`, named `example-pipeline-run`, triggers the execution of `example-pipeline`.
 
-### To Uninstall
-**Delete the instances (CRs) from the cluster:**
+### Applying the Definitions
 
-```sh
-kubectl delete -k config/samples/
-```
-
-**Delete the APIs(CRDs) from the cluster:**
+Deploy the `ApprovalTask`, the pipeline, and initiate the pipeline run by applying the YAML files to your Kubernetes cluster:
 
 ```sh
-make uninstall
+kubectl apply -f approvaltask.yaml
+kubectl apply -f pipeline.yaml
+kubectl apply -f pipeline-run.yaml
 ```
 
-**UnDeploy the controller from the cluster:**
+## Features
 
-```sh
-make undeploy
-```
+- **Custom Task Definitions**: Define your tasks that extend the Tekton pipeline model.
+- **Flexible Configuration**: Leverage Kubernetes CRDs for task definitions, allowing for dynamic and flexible configurations.
+- **Integration with Tekton Pipelines**: Seamlessly integrate custom tasks within your existing Tekton pipelines.
 
-## Project Distribution
+## Integration and Notifications
 
-Following are the steps to build the installer and distribute this project to users.
+Tekton Custom Task supports integration with Kubernetes dashboards and notification systems. This allows for improved monitoring and alerting capabilities for your custom tasks.
 
-1. Build the installer for the image built and published in the registry:
+## Roadmap
 
-```sh
-make build-installer IMG=<some-registry>/tekton-custom-task:tag
-```
+Future developments include:
 
-NOTE: The makefile target mentioned above generates an 'install.yaml'
-file in the dist directory. This file contains all the resources built
-with Kustomize, which are necessary to install this project without
-its dependencies.
-
-2. Using the installer
-
-Users can just run kubectl apply -f <URL for YAML BUNDLE> to install the project, i.e.:
-
-```sh
-kubectl apply -f https://raw.githubusercontent.com/<org>/tekton-custom-task/<tag or branch>/dist/install.yaml
-```
+- Enhanced UI for managing custom tasks.
+- More examples and templates for common use cases.
+- Improved integration with external tools and platforms.
 
 ## Contributing
-// TODO(user): Add detailed information on how you would like others to contribute to this project
 
-**NOTE:** Run `make help` for more information on all potential `make` targets
-
-More information can be found via the [Kubebuilder Documentation](https://book.kubebuilder.io/introduction.html)
+We welcome contributions in the form of issues and pull requests. Please follow the contributing guidelines outlined in the repository.
 
 ## License
 
-Copyright 2024.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-
+This project is licensed under the [Apache License 2.0](LICENSE.txt).
