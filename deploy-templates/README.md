@@ -2,7 +2,7 @@
 
 ![Version: 0.0.1](https://img.shields.io/badge/Version-0.0.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.0.1](https://img.shields.io/badge/AppVersion-0.0.1-informational?style=flat-square)
 
-A Helm chart for KubeRocketCI tekton-custom-task
+A Helm chart for Tekton Custom Tasks
 
 **Homepage:** <https://github.com/KubeRocketCI/tekton-custom-task>
 
@@ -15,7 +15,7 @@ A Helm chart for KubeRocketCI tekton-custom-task
 
 ## Source Code
 
-* <https://git.epam.com/KubeRocketCI/tekton-custom-task>
+* <https://github.com/KubeRocketCI/tekton-custom-task>
 
 ## Values
 
@@ -24,7 +24,7 @@ A Helm chart for KubeRocketCI tekton-custom-task
 | affinity | object | `{}` |  |
 | annotations | object | `{}` |  |
 | image.repository | string | `"KubeRocketCI/tekton-custom-task"` | tekton-custom-task Docker image name. The released image can be found on [Dockerhub](https://hub.docker.com/r/KubeRocketCI/tekton-custom-task) |
-| image.tag | string | `nil` | tekton-custom-task Docker image tag. The released image can be found on [Dockerhub](https://hub.docker.com/r/KubeRocketCI/tekton-custom-task/tags) |
+| image.tag | string | `nil` | tekton-custom-task Docker image tag. The released image can be found on [Dockerhub](https://hub.docker.com/r/KubeRocketCI/tekton-custom-task) |
 | imagePullPolicy | string | `"IfNotPresent"` |  |
 | name | string | `"tekton-custom-task"` | component name |
 | nodeSelector | object | `{}` |  |

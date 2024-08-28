@@ -255,11 +255,10 @@ $(GOLANGCI_LINT): $(LOCALBIN)
 # $3 - specific version of package
 define go-install-tool
 @[ -f $(1) ] || { \
-set -e; \
+set -ex; \
 package=$(2)@$(3) ;\
 echo "Downloading $${package}" ;\
 GOBIN=$(LOCALBIN) go install $${package} ;\
-mv "$$(echo "$(1)" | sed "s/-$(3)$$//")" $(1) ;\
 }
 endef
 
