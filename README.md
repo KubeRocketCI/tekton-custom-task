@@ -1,5 +1,25 @@
 # Tekton Custom Task
 
+<!-- TOC -->
+
+- [Tekton Custom Task](#tekton-custom-task)
+  - [Introduction](#introduction)
+  - [Project Structure](#project-structure)
+  - [Getting Started](#getting-started)
+    - [Deploy with helm chart](#deploy-with-helm-chart)
+  - [Usage](#usage)
+    - [Using the ApprovalTask in a Tekton Pipeline](#using-the-approvaltask-in-a-tekton-pipeline)
+      - [Define the Pipeline](#define-the-pipeline)
+      - [Define the PipelineRun](#define-the-pipelinerun)
+    - [Applying the Definitions](#applying-the-definitions)
+  - [Features](#features)
+  - [Integration and Notifications](#integration-and-notifications)
+  - [Roadmap](#roadmap)
+  - [Contributing](#contributing)
+  - [License](#license)
+
+<!-- /TOC -->
+
 ## Introduction
 
 Tekton Custom Task extends Kubernetes and Tekton capabilities by providing custom task implementations.
@@ -26,50 +46,39 @@ To get started with Tekton Custom Task, ensure you have Kubernetes and Tekton Pi
    kubectl apply -f config/crd/bases/
    ```
 
-4. Deploy the custom tasks using:
+### Deploy with helm chart
 
-   ```bash
-   kubectl apply -f config/samples/
-   ```
+1. To add the Helm EPAMEDP Charts for local client, run "helm repo add":
 
-Below is an example of how to define a custom task in your Tekton pipeline:
+    ```bash
+    helm repo add epamedp https://epam.github.io/edp-helm-charts/stable
+    ```
 
-```yaml
-apiVersion: edp.epam.com/v1alpha1
-kind: ApprovalTask
-metadata:
-  name: approvaltask-sample
-  labels:
-    app.kubernetes.io/name: tekton-custom-task
-    app.kubernetes.io/managed-by: kustomize
-spec:
-  action: Pending
-  description: "Approval required for the next step in the pipeline."
-```
+2. Choose available Helm chart version:
 
-This example demonstrates how to run a `CustomTask` named `example-custom-task` within a Tekton pipeline.
+    ```bash
+    helm search repo epamedp/tekton-custom-task -l
+    NAME                           CHART VERSION   APP VERSION     DESCRIPTION
+    epamedp/tekton-custom-task      0.1.0          0.1.0          A Helm chart for Tekton Custom Tasks
+    ```
+
+  _**NOTE:** It is highly recommended to use the latest released version._
+
+3. Full chart parameters available in [deploy-templates/README.md](deploy-templates/README.md).
+
+4. Install operator with the following command:
+
+  ```bash
+  helm install tekton-custom-task epamedp/tekton-custom-task --version <chart_version>
+  ```
+
+5. Check the namespace that should contain CustomTask controller in a running status.
 
 ## Usage
 
 This set of instructions guides you through the process of creating a custom `ApprovalTask` and incorporating it into a Tekton pipeline to serve as an approval step.
 
 To integrate the `ApprovalTask` into your CI/CD pipelines, follow these steps to define the custom task and use it within a Tekton pipeline.
-
-### Defining an `ApprovalTask`
-
-Create an `ApprovalTask` definition by preparing a YAML file named `approvaltask.yaml` with the contents below:
-
-```yaml
-apiVersion: edp.epam.com/v1alpha1
-kind: ApprovalTask
-metadata:
-  name: approvaltask-example
-spec:
-  action: Pending
-  description: "Approval required for the next deployment phase."
-```
-
-This YAML snippet creates an `ApprovalTask` resource named `approvaltask-example`. The task is initially set to a `Pending` state, indicating it awaits approval, and it includes a description to provide context for the approval required.
 
 ### Using the `ApprovalTask` in a Tekton Pipeline
 
