@@ -177,7 +177,9 @@ func (r *ReconcileCustomRun) createApprovalTask(ctx context.Context, run *tekton
 			Namespace: run.Namespace,
 			Labels:    getCustomRunLabels(run),
 		},
-		Spec: customTasksApi.ApprovalTaskSpec{},
+		Spec: customTasksApi.ApprovalTaskSpec{
+			Description: getApprovalTaskDescription(run),
+		},
 	}
 
 	if err := controllerutil.SetControllerReference(run, task, r.client.Scheme()); err != nil {
@@ -202,24 +204,24 @@ func (r *ReconcileCustomRun) cancelApprovalTask(ctx context.Context, run *tekton
 		Namespace: run.Namespace,
 		Name:      makeApprovalTaskName(run),
 	}, task)
-	if err != nil {
-		if k8sErrors.IsNotFound(err) {
-			return nil
-		}
-
+	if err != nil && !k8sErrors.IsNotFound(err) {
 		return fmt.Errorf("failed to get ApprovalTask for cancellation: %w", err)
 	}
 
-	task.Spec.Action = customTasksApi.TaskCanceled
-	if err = r.client.Update(ctx, task); err != nil {
-		return fmt.Errorf("failed to cancel ApprovalTask: %w", err)
+	if err == nil {
+		task.Spec.Action = customTasksApi.TaskCanceled
+		if err = r.client.Update(ctx, task); err != nil {
+			return fmt.Errorf("failed to cancel ApprovalTask: %w", err)
+		}
+
+		log.Info("ApprovalTask canceled")
 	}
 
 	if err = r.setFailedStatus(ctx, run, "Canceled", "Pipeline run was canceled"); err != nil {
 		return err
 	}
 
-	log.Info("ApprovalTask canceled")
+	log.Info("CustomRun canceled")
 
 	return nil
 }
@@ -269,20 +271,37 @@ func makeApprovalTaskName(run *tektonPipelineApi.CustomRun) string {
 	return fmt.Sprintf("%s-approval", run.Name)
 }
 
+const (
+	tektonPipelineLabel     = "tekton.dev/pipeline"
+	tektonPipelineRunLabel  = "tekton.dev/pipelineRun"
+	tektonPipelineTaskLabel = "tekton.dev/pipelineTask"
+)
+
 func getCustomRunLabels(run *tektonPipelineApi.CustomRun) map[string]string {
 	l := make(map[string]string, len(run.Labels))
 
-	if v, ok := run.Labels["tekton.dev/pipeline"]; ok {
-		l["tekton.dev/pipeline"] = v
+	if v, ok := run.Labels[tektonPipelineLabel]; ok {
+		l[tektonPipelineLabel] = v
 	}
 
-	if v, ok := run.Labels["tekton.dev/pipelineRun"]; ok {
-		l["tekton.dev/pipelineRun"] = v
+	if v, ok := run.Labels[tektonPipelineRunLabel]; ok {
+		l[tektonPipelineRunLabel] = v
 	}
 
-	if v, ok := run.Labels["tekton.dev/pipelineTask"]; ok {
-		l["tekton.dev/pipelineTask"] = v
+	if v, ok := run.Labels[tektonPipelineTaskLabel]; ok {
+		l[tektonPipelineTaskLabel] = v
 	}
 
 	return l
+}
+
+const descriptionParamName = "description"
+
+func getApprovalTaskDescription(run *tektonPipelineApi.CustomRun) string {
+	d := run.Spec.GetParam(descriptionParamName)
+	if d != nil {
+		return d.Value.StringVal
+	}
+
+	return ""
 }
