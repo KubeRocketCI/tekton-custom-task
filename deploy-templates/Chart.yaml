@@ -1,17 +1,20 @@
 apiVersion: v2
 description: A Helm chart for Tekton Custom Tasks
-home: https://github.com/KubeRocketCI/tekton-custom-task
+home: https://docs.kuberocketci.io/
 name: tekton-custom-task
 type: application
 version: 0.1.0
 appVersion: 0.1.0
 keywords:
-  - tekton
+  - approval
+  - custom-task
+  - kuberocketci
   - pipeline
+  - tekton
 maintainers:
   - name: epmd-edp
     email: SupportEPMD-EDP@epam.com
-    url: https://solutionshub.epam.com/solution/epam-delivery-platform
+    url: https://solutionshub.epam.com/solution/kuberocketci
   - name: sergk
     url: https://github.com/SergK
 sources:
@@ -20,9 +23,25 @@ annotations:
   artifacthub.io/license: Apache-2.0
   artifacthub.io/operator: "true"
   artifacthub.io/images: |
-    - name: tekton-custom-task:0.1.0-SNAPSHOT.4
-      image: epamedp/tekton-custom-task:0.1.0-SNAPSHOT.4
+    - name: tekton-custom-task:0.1.0-SNAPSHOT.10
+      image: epamedp/tekton-custom-task:0.1.0-SNAPSHOT.10
   artifacthub.io/operatorCapabilities: Full Lifecycle
   artifacthub.io/crds: |
+    - kind: ApprovalTask
+      version: edp.epam.com/v1alpha1
+      name: approval-task
+      displayName: Approval Task
+      description: Approval Task for the Tekton pipeline
   artifacthub.io/crdsExamples: |
+    - apiVersion: edp.epam.com/v1alpha1
+      kind: ApprovalTask
+      metadata:
+        name: approval-task
+      spec:
+        action: Approved
+        description: Are you sure you want to deploy?
   artifacthub.io/links: |
+    - name: KubeRocketCI Documentation
+      url: https://docs.kuberocketci.io
+    - name: EPAM SolutionHub
+      url: https://solutionshub.epam.com/solution/kuberocketci
