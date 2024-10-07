@@ -75,6 +75,10 @@ var _ = Describe("CodebaseIntegration controller", func() {
 
 			By("Approving ApprovalTask")
 			task.Spec.Action = customTasksApi.TaskApproved
+			task.Spec.Approve = &customTasksApi.Approve{
+				ApprovedBy: "admin",
+				Comment:    "ok",
+			}
 			g.Expect(k8sClient.Update(ctx, task)).Should(Succeed())
 		}).WithTimeout(time.Second * 5).WithPolling(time.Second).Should(Succeed())
 		By("Checking CustomRun completion")
@@ -86,6 +90,8 @@ var _ = Describe("CodebaseIntegration controller", func() {
 			g.Expect(err).ShouldNot(HaveOccurred())
 			g.Expect(createdRun.IsSuccessful()).Should(BeTrue())
 			g.Expect(createdRun.Status.CompletionTime).ShouldNot(BeNil())
+			g.Expect(createdRun.Status.Results).Should(HaveLen(3))
+			g.Expect(createdRun.Status.Results[0].Value).Should(Equal("true"))
 		}).WithTimeout(time.Second * 20).WithPolling(time.Second).Should(Succeed())
 	})
 	It("Should process CustomRun with reject ApprovalTask", func() {
@@ -111,6 +117,10 @@ var _ = Describe("CodebaseIntegration controller", func() {
 
 			By("Rejecting ApprovalTask")
 			task.Spec.Action = customTasksApi.TaskRejected
+			task.Spec.Approve = &customTasksApi.Approve{
+				ApprovedBy: "admin",
+				Comment:    "not ok",
+			}
 			g.Expect(k8sClient.Update(ctx, task)).Should(Succeed())
 		}).WithTimeout(time.Second * 5).WithPolling(time.Second).Should(Succeed())
 		By("Checking CustomRun completion")
@@ -122,6 +132,8 @@ var _ = Describe("CodebaseIntegration controller", func() {
 			g.Expect(err).ShouldNot(HaveOccurred())
 			g.Expect(createdRun.IsSuccessful()).Should(BeFalse())
 			g.Expect(createdRun.Status.CompletionTime).ShouldNot(BeNil())
+			g.Expect(createdRun.Status.Results).Should(HaveLen(3))
+			g.Expect(createdRun.Status.Results[0].Value).Should(Equal("false"))
 		}).WithTimeout(time.Second * 20).WithPolling(time.Second).Should(Succeed())
 	})
 	It("Should cancel ApprovalTask after canceling CustomRun", func() {
@@ -171,6 +183,8 @@ var _ = Describe("CodebaseIntegration controller", func() {
 			g.Expect(err).ShouldNot(HaveOccurred())
 			g.Expect(createdRun.IsSuccessful()).Should(BeFalse())
 			g.Expect(createdRun.Status.CompletionTime).ShouldNot(BeNil())
+			g.Expect(createdRun.Status.Results).Should(HaveLen(1))
+			g.Expect(createdRun.Status.Results[0].Value).Should(Equal("false"))
 		}).WithTimeout(time.Second * 20).WithPolling(time.Second).Should(Succeed())
 	})
 	It("Should skip CustomRun without ApprovalTask ref", func() {

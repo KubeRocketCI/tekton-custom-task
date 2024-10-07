@@ -3,6 +3,7 @@ package controller
 import (
 	"context"
 	"fmt"
+	"strconv"
 	"time"
 
 	customTasksApi "github.com/KubeRocketCI/tekton-custom-task/api/v1alpha1"
@@ -96,10 +97,19 @@ func (r *ReconcileCustomRun) setRunningStatus(ctx context.Context, run *tektonPi
 	return nil
 }
 
-func (r *ReconcileCustomRun) setSucceededStatus(ctx context.Context, run *tektonPipelineApi.CustomRun) error {
+func (r *ReconcileCustomRun) setSucceededStatus(
+	ctx context.Context,
+	run *tektonPipelineApi.CustomRun,
+	results []tektonPipelineApi.CustomRunResult,
+) error {
 	now := metav1.Now()
 	run.Status.CompletionTime = &now
 	run.Status.MarkCustomRunSucceeded("Approved", "Pipeline run was approved")
+
+	run.Status.Results = append(
+		run.Status.Results,
+		results...,
+	)
 
 	if err := r.client.Status().Update(ctx, run); err != nil {
 		return fmt.Errorf("failed to update CustomRun status: %w", err)
@@ -112,8 +122,14 @@ func (r *ReconcileCustomRun) setFailedStatus(
 	ctx context.Context,
 	run *tektonPipelineApi.CustomRun,
 	reason, message string,
+	results []tektonPipelineApi.CustomRunResult,
 ) error {
 	run.Status.MarkCustomRunFailed(reason, message)
+
+	run.Status.Results = append(
+		run.Status.Results,
+		results...,
+	)
 
 	if err := r.client.Status().Update(ctx, run); err != nil {
 		return fmt.Errorf("failed to update CustomRun status: %w", err)
@@ -147,7 +163,7 @@ func (r *ReconcileCustomRun) processApprovalTask(ctx context.Context, run *tekto
 	if task.IsApproved() {
 		log.Info("ApprovalTask is approved")
 
-		if err = r.setSucceededStatus(ctx, run); err != nil {
+		if err = r.setSucceededStatus(ctx, run, getResults(task)); err != nil {
 			return err
 		}
 
@@ -157,7 +173,7 @@ func (r *ReconcileCustomRun) processApprovalTask(ctx context.Context, run *tekto
 	if task.IsRejected() {
 		log.Info("ApprovalTask is rejected")
 
-		if err = r.setFailedStatus(ctx, run, "Rejected", "Pipeline run was rejected"); err != nil {
+		if err = r.setFailedStatus(ctx, run, "Rejected", "Pipeline run was rejected", getResults(task)); err != nil {
 			return err
 		}
 
@@ -217,7 +233,7 @@ func (r *ReconcileCustomRun) cancelApprovalTask(ctx context.Context, run *tekton
 		log.Info("ApprovalTask canceled")
 	}
 
-	if err = r.setFailedStatus(ctx, run, "Canceled", "Pipeline run was canceled"); err != nil {
+	if err = r.setFailedStatus(ctx, run, "Canceled", "Pipeline run was canceled", getResults(task)); err != nil {
 		return err
 	}
 
@@ -304,4 +320,37 @@ func getApprovalTaskDescription(run *tektonPipelineApi.CustomRun) string {
 	}
 
 	return ""
+}
+
+func getResults(task *customTasksApi.ApprovalTask) []tektonPipelineApi.CustomRunResult {
+	if task == nil {
+		return []tektonPipelineApi.CustomRunResult{
+			{
+				Name:  "approved",
+				Value: "false",
+			},
+		}
+	}
+
+	r := []tektonPipelineApi.CustomRunResult{
+		{
+			Name:  "approved",
+			Value: strconv.FormatBool(task.IsApproved()),
+		},
+	}
+
+	if task.Spec.Approve != nil {
+		r = append(r,
+			tektonPipelineApi.CustomRunResult{
+				Name:  "approvedBy",
+				Value: task.Spec.Approve.ApprovedBy,
+			},
+			tektonPipelineApi.CustomRunResult{
+				Name:  "comment",
+				Value: task.Spec.Approve.Comment,
+			},
+		)
+	}
+
+	return r
 }

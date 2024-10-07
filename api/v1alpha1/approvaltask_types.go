@@ -25,6 +25,20 @@ type ApprovalTaskSpec struct {
 	// +optional
 	// +kubebuilder:default=Proceed
 	Description string `json:"description,omitempty"`
+
+	// Approve is the approval information.
+	// +optional
+	Approve *Approve `json:"approve,omitempty"`
+}
+
+type Approve struct {
+	// ApprovedBy is indicating the identity of the approver.
+	// +required
+	ApprovedBy string `json:"approvedBy"`
+
+	// Comment is the comment provided by the approver.
+	// +optional
+	Comment string `json:"comment,omitempty"`
 }
 
 type PipelineRef struct {

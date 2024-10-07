@@ -48,6 +48,18 @@ spec:
                 - Rejected
                 - Canceled
                 type: string
+              approve:
+                description: Approve is the approval information.
+                properties:
+                  approvedBy:
+                    description: ApprovedBy is indicating the identity of the approver.
+                    type: string
+                  comment:
+                    description: Comment is the comment provided by the approver.
+                    type: string
+                required:
+                - approvedBy
+                type: object
               description:
                 default: Proceed
                 description: Description that is shown to the user for the approval
