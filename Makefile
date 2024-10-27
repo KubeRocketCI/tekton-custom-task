@@ -335,6 +335,14 @@ catalog-build: opm ## Build a catalog image.
 catalog-push: ## Push a catalog image.
 	$(MAKE) docker-push IMG=$(CATALOG_IMG)
 
+# use https://github.com/git-chglog/git-chglog/
+.PHONY: changelog
+changelog: git-chglog	## generate changelog
+ifneq (${NEXT_RELEASE_TAG},)
+	$(GITCHGLOG) --next-tag v${NEXT_RELEASE_TAG} -o CHANGELOG.md v0.1.0..
+else
+	$(GITCHGLOG) -o CHANGELOG.md build/0.1.0-SNAPSHOT.1..
+endif
 
 .PHONY: validate-docs
 validate-docs: api-docs helm-docs  ## Validate helm and api docs
