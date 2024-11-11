@@ -1,6 +1,9 @@
 <a name="unreleased"></a>
 ## [Unreleased]
 
+
+<a name="v0.1.0"></a>
+## v0.1.0 - 2024-11-11
 ### Features
 
 - Extend ApprovalTask with approval details
@@ -8,10 +11,12 @@
 
 ### Bug Fixes
 
+- Set correct image name in release action
 - Update dependencies and Makefile files
 
 ### Routine
 
+- Add changelog generator
 - Update Chart.yaml documentation
 - Add templates for github issues
 - Update dependabot.yml
@@ -24,7 +29,4 @@
 - Update documentation
 
 
-<a name="v0.0.1"></a>
-## v0.0.1 - 2024-10-27
-
-[Unreleased]: https://github.com/KubeRocketCI/tekton-custom-task/compare/v0.0.1...HEAD
+[Unreleased]: https://github.com/KubeRocketCI/tekton-custom-task/compare/v0.1.0...HEAD
