@@ -6,7 +6,8 @@
   - [Introduction](#introduction)
   - [Project Structure](#project-structure)
   - [Getting Started](#getting-started)
-    - [Deploy with helm chart](#deploy-with-helm-chart)
+    - [Deploy with Helm](#deploy-with-helm)
+    - [Deploy with cluster add-ons](#deploy-with-cluster-add-ons)
   - [Usage](#usage)
     - [Using the ApprovalTask in a Tekton Pipeline](#using-the-approvaltask-in-a-tekton-pipeline)
       - [Define the Pipeline](#define-the-pipeline)
@@ -46,7 +47,7 @@ To get started with Tekton Custom Task, ensure you have Kubernetes and Tekton Pi
    kubectl apply -f config/crd/bases/
    ```
 
-### Deploy with helm chart
+### Deploy with Helm
 
 1. To add the Helm EPAMEDP Charts for local client, run "helm repo add":
 
@@ -62,17 +63,33 @@ To get started with Tekton Custom Task, ensure you have Kubernetes and Tekton Pi
     epamedp/tekton-custom-task      0.1.0          0.1.0          A Helm chart for Tekton Custom Tasks
     ```
 
-  _**NOTE:** It is highly recommended to use the latest released version._
+    _**NOTE:** It is highly recommended to use the latest released version._
 
 3. Full chart parameters available in [deploy-templates/README.md](deploy-templates/README.md).
 
 4. Install operator with the following command:
 
-  ```bash
-  helm install tekton-custom-task epamedp/tekton-custom-task --version <chart_version>
-  ```
+    ```bash
+    helm install tekton-custom-task epamedp/tekton-custom-task --version <chart_version>
+    ```
 
 5. Check the namespace that should contain CustomTask controller in a running status.
+
+### Deploy with cluster add-ons
+
+1. Navigate to the forked [edp-cluster-add-ons](https://github.com/epam/edp-cluster-add-ons) repository.
+
+2. Enable the deployment of the Tekton Custom Task Helm chart by setting the `tekton-custom-task.enable` and `tekton-custom-task.createNamespace` values to `true` in the `clusters/core/apps/values.yaml` file.
+
+    ```yaml title="clusters/core/apps/values.yaml"
+    tekton-custom-task:
+      createNamespace: true
+      enable: true
+    ```
+
+3. Update the `clusters/core/addons/tekton-custom-task/values.yaml` file with the desired configuration for the Tekton Custom Task Helm chart.
+
+4. After updating the `values.yaml` file, commit the changes to the repository and apply the changes with Helm or Argo CD.
 
 ## Usage
 
