@@ -178,6 +178,7 @@ This project is licensed under the [Apache License 2.0](LICENSE.txt).
 | image.repository | string | `"epamedp/tekton-custom-task"` | tekton-custom-task Docker image name. The released image can be found on [Dockerhub](https://hub.docker.com/r/epamedp/tekton-custom-task) |
 | image.tag | string | `nil` | tekton-custom-task Docker image tag. The released image can be found on [Dockerhub](https://hub.docker.com/r/epamedp/tekton-custom-task) |
 | imagePullPolicy | string | `"IfNotPresent"` |  |
+| imagePullSecrets | list | `[]` | Optional array of imagePullSecrets containing private registry credentials # Ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry |
 | name | string | `"tekton-custom-task"` | component name |
 | nodeSelector | object | `{}` |  |
 | resources.limits.memory | string | `"192Mi"` |  |
