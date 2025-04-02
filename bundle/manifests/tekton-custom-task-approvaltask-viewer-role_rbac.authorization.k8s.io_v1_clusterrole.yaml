@@ -1,0 +1,23 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/name: tekton-custom-task
+  name: tekton-custom-task-approvaltask-viewer-role
+rules:
+- apiGroups:
+  - edp.epam.com
+  resources:
+  - approvaltasks
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - edp.epam.com
+  resources:
+  - approvaltasks/status
+  verbs:
+  - get

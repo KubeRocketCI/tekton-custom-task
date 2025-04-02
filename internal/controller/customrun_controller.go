@@ -25,13 +25,11 @@ func NewReconcileCustomRun(client client.Client) *ReconcileCustomRun {
 	return &ReconcileCustomRun{client: client}
 }
 
-//+kubebuilder:rbac:groups=edp.epam.com,resources=approvaltasks,verbs=get;list;watch;create;update;patch;delete
-//+kubebuilder:rbac:groups=edp.epam.com,resources=approvaltasks/status,verbs=get;update;patch
-//+kubebuilder:rbac:groups=edp.epam.com,resources=approvaltasks/finalizers,verbs=update
-
-//+kubebuilder:rbac:groups=tekton.dev,resources=customruns,verbs=get;list;watch;update;patch
-//+kubebuilder:rbac:groups=tekton.dev,resources=customruns/status,verbs=get;update;patch
-
+// +kubebuilder:rbac:groups=edp.epam.com,resources=approvaltasks,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups=edp.epam.com,resources=approvaltasks/status,verbs=get;update;patch
+// +kubebuilder:rbac:groups=edp.epam.com,resources=approvaltasks/finalizers,verbs=update
+// +kubebuilder:rbac:groups=tekton.dev,resources=customruns,verbs=get;list;watch;update;patch
+// +kubebuilder:rbac:groups=tekton.dev,resources=customruns/status,verbs=get;update;patch
 // Reconcile is responsible for reconciling CustomRun objects with ApprovalTask references.
 func (r *ReconcileCustomRun) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	log := ctrl.LoggerFrom(ctx)
@@ -216,6 +214,7 @@ func (r *ReconcileCustomRun) cancelApprovalTask(ctx context.Context, run *tekton
 	log.Info("Cancelling ApprovalTask")
 
 	task := &customTasksApi.ApprovalTask{}
+
 	err := r.client.Get(ctx, client.ObjectKey{
 		Namespace: run.Namespace,
 		Name:      makeApprovalTaskName(run),
