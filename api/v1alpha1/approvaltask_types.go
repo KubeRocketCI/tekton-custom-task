@@ -51,9 +51,8 @@ type PipelineRef struct {
 type ApprovalTaskStatus struct {
 }
 
-//+kubebuilder:object:root=true
-//+kubebuilder:subresource:status
-
+// +kubebuilder:object:root=true
+// +kubebuilder:subresource:status
 // ApprovalTask is the Schema for the approvaltasks API
 type ApprovalTask struct {
 	metav1.TypeMeta   `json:",inline"`
@@ -71,8 +70,7 @@ func (a *ApprovalTask) IsRejected() bool {
 	return a.Spec.Action == TaskRejected
 }
 
-//+kubebuilder:object:root=true
-
+// +kubebuilder:object:root=true
 // ApprovalTaskList contains a list of ApprovalTask
 type ApprovalTaskList struct {
 	metav1.TypeMeta `json:",inline"`

@@ -48,11 +48,11 @@ endif
 
 # Set the Operator SDK version to use. By default, what is installed on the system is used.
 # This is useful for CI or a project to utilize a specific version of the operator-sdk toolkit.
-OPERATOR_SDK_VERSION ?= v1.36.1
+OPERATOR_SDK_VERSION ?= v1.39.2
 # Image URL to use all building/pushing image targets
 IMG ?= controller:latest
 # ENVTEST_K8S_VERSION refers to the version of kubebuilder assets to be downloaded by envtest binary.
-ENVTEST_K8S_VERSION = 1.29.0
+ENVTEST_K8S_VERSION = 1.31.0
 
 # Get the currently used golang install path (in GOPATH/bin, unless GOBIN is set)
 ifeq (,$(shell go env GOBIN))
@@ -141,7 +141,7 @@ BIN_NAME=manager
 override GCFLAGS +=all=-trimpath=${CURRENT_DIR}
 
 .PHONY: build
-build: clean ## build operator's binary
+build: clean fmt vet ## build operator's binary
 	CGO_ENABLED=0 GOOS=${HOST_OS} GOARCH=${HOST_ARCH} go build -v -ldflags '${LDFLAGS}' -o ${DIST_DIR}/${BIN_NAME} -gcflags '${GCFLAGS}' cmd/main.go
 
 .PHONY: clean
@@ -216,18 +216,22 @@ LOCALBIN ?= $(shell pwd)/bin
 $(LOCALBIN):
 	mkdir -p $(LOCALBIN)
 
+## Tool Versions
+KUSTOMIZE_VERSION ?= v5.4.3
+CONTROLLER_TOOLS_VERSION ?= v0.16.5
+ENVTEST_VERSION ?= release-0.19
+GOLANGCI_LINT_VERSION ?= v1.64.7
+HELMDOCS_VERSION ?= v1.14.2
+GITCHGLOG_VERSION ?= v0.15.4
+CRDOC_VERSION ?= v0.6.4
+
 ## Tool Binaries
 KUBECTL ?= kubectl
-KUSTOMIZE ?= $(LOCALBIN)/kustomize-$(KUSTOMIZE_VERSION)
-CONTROLLER_GEN ?= $(LOCALBIN)/controller-gen-$(CONTROLLER_TOOLS_VERSION)
+KUSTOMIZE ?= $(LOCALBIN)/kustomize
+CONTROLLER_GEN ?= $(LOCALBIN)/controller-gen
 ENVTEST ?= $(LOCALBIN)/setup-envtest
-GOLANGCI_LINT = $(LOCALBIN)/golangci-lint-$(GOLANGCI_LINT_VERSION)
+GOLANGCI_LINT = $(LOCALBIN)/golangci-lint
 
-## Tool Versions
-KUSTOMIZE_VERSION ?= v5.3.0
-CONTROLLER_TOOLS_VERSION ?= v0.14.0
-ENVTEST_VERSION ?= release-0.17
-GOLANGCI_LINT_VERSION ?= v1.57.2
 
 .PHONY: kustomize
 kustomize: $(KUSTOMIZE) ## Download kustomize locally if necessary.
@@ -356,7 +360,7 @@ api-docs: crdoc	## generate CRD docs
 CRDOC = $(LOCALBIN)/crdoc
 .PHONY: crdoc
 crdoc: ## Download crdoc locally if necessary.
-	$(call go-install-tool,$(LOCALBIN)/crdoc,fybrik.io/crdoc,v0.6.3)
+	$(call go-install-tool,$(LOCALBIN)/crdoc,fybrik.io/crdoc,$(CRDOC_VERSION))
 
 .PHONY: helm-docs
 helm-docs: helmdocs	## generate helm docs
@@ -365,9 +369,9 @@ helm-docs: helmdocs	## generate helm docs
 HELMDOCS = $(LOCALBIN)/helm-docs
 .PHONY: helmdocs
 helmdocs: ## Download helm-docs locally if necessary.
-	$(call go-install-tool,$(LOCALBIN)/helm-docs,github.com/norwoodj/helm-docs/cmd/helm-docs,v1.13.1)
+	$(call go-install-tool,$(LOCALBIN)/helm-docs,github.com/norwoodj/helm-docs/cmd/helm-docs,$(HELMDOCS_VERSION))
 
 GITCHGLOG = $(LOCALBIN)/git-chglog
 .PHONY: git-chglog
 git-chglog: ## Download git-chglog locally if necessary.
-	$(call go-install-tool,$(LOCALBIN)/git-chglog,github.com/git-chglog/git-chglog/cmd/git-chglog,v0.15.4)
+	$(call go-install-tool,$(LOCALBIN)/git-chglog,github.com/git-chglog/git-chglog/cmd/git-chglog,$(GITCHGLOG_VERSION))
