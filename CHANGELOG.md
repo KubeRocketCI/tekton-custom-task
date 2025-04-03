@@ -1,15 +1,9 @@
 <a name="unreleased"></a>
 ## [Unreleased]
 
-### Routine
 
-- Add ImagePullSecrets field support ([#23](https://github.com/KubeRocketCI/tekton-custom-task/issues/23))
-- Bump golang.org/x/net in the go_modules group
-- Update README.md template
-
-
-<a name="v0.1.0"></a>
-## [v0.1.0] - 2024-11-11
+<a name="v0.2.0"></a>
+## v0.2.0 - 2025-04-03
 ### Features
 
 - Extend ApprovalTask with approval details
@@ -22,6 +16,11 @@
 
 ### Routine
 
+- Bump golang.org/x/net in the go_modules group
+- Update operator-sdk and golang version ([#25](https://github.com/KubeRocketCI/tekton-custom-task/issues/25))
+- Add ImagePullSecrets field support ([#23](https://github.com/KubeRocketCI/tekton-custom-task/issues/23))
+- Bump golang.org/x/net in the go_modules group
+- Update README.md template
 - Add changelog generator
 - Update Chart.yaml documentation
 - Add templates for github issues
@@ -35,8 +34,4 @@
 - Update documentation
 
 
-<a name="v0.0.1"></a>
-## v0.0.1 - 2024-10-27
-
-[Unreleased]: https://github.com/KubeRocketCI/tekton-custom-task/compare/v0.1.0...HEAD
-[v0.1.0]: https://github.com/KubeRocketCI/tekton-custom-task/compare/v0.0.1...v0.1.0
+[Unreleased]: https://github.com/KubeRocketCI/tekton-custom-task/compare/v0.2.0...HEAD

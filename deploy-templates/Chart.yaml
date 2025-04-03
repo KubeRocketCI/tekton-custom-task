@@ -3,8 +3,8 @@ description: A Helm chart for Tekton Custom Tasks
 home: https://docs.kuberocketci.io/
 name: tekton-custom-task
 type: application
-version: 0.1.0
-appVersion: 0.1.0
+version: 0.2.0
+appVersion: 0.2.0
 keywords:
   - approval
   - custom-task
@@ -23,8 +23,8 @@ annotations:
   artifacthub.io/license: Apache-2.0
   artifacthub.io/operator: "true"
   artifacthub.io/images: |
-    - name: tekton-custom-task:0.1.0-SNAPSHOT.10
-      image: epamedp/tekton-custom-task:0.1.0-SNAPSHOT.10
+    - name: tekton-custom-task:0.2.0
+      image: epamedp/tekton-custom-task:0.2.0
   artifacthub.io/operatorCapabilities: Full Lifecycle
   artifacthub.io/crds: |
     - kind: ApprovalTask
