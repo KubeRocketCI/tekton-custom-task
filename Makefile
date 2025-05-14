@@ -141,8 +141,8 @@ BIN_NAME=manager
 override GCFLAGS +=all=-trimpath=${CURRENT_DIR}
 
 .PHONY: build
-build: clean fmt vet ## build operator's binary
-	CGO_ENABLED=0 GOOS=${HOST_OS} GOARCH=${HOST_ARCH} go build -v -ldflags '${LDFLAGS}' -o ${DIST_DIR}/${BIN_NAME} -gcflags '${GCFLAGS}' cmd/main.go
+build: fmt vet ## build operator's binary
+	CGO_ENABLED=0 GOOS=${HOST_OS} GOARCH=${HOST_ARCH} go build -v -ldflags '${LDFLAGS}' -o ${DIST_DIR}/${BIN_NAME}-${HOST_ARCH} -gcflags '${GCFLAGS}' cmd/main.go
 
 .PHONY: clean
 clean:  ## clean up
