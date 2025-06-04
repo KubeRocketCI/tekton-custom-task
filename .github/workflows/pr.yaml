@@ -2,7 +2,7 @@ name: "pull_request"
 
 on:
   pull_request:
-    branches: [master]
+    branches: [main]
     types: [opened, synchronize, reopened]
 
 concurrency:
