@@ -4,6 +4,9 @@ on:
     tags:
       - 'v*'
 
+permissions:
+  contents: read
+
 env:
     GOLANG_VERSION: '1.24'
 
