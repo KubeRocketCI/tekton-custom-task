@@ -21,8 +21,8 @@ type ReconcileCustomRun struct {
 	client client.Client
 }
 
-func NewReconcileCustomRun(client client.Client) *ReconcileCustomRun {
-	return &ReconcileCustomRun{client: client}
+func NewReconcileCustomRun(cl client.Client) *ReconcileCustomRun {
+	return &ReconcileCustomRun{client: cl}
 }
 
 // +kubebuilder:rbac:groups=edp.epam.com,resources=approvaltasks,verbs=get;list;watch;create;update;patch;delete
@@ -141,11 +141,11 @@ func (r *ReconcileCustomRun) processApprovalTask(ctx context.Context, run *tekto
 	log.Info("Processing ApprovalTask")
 
 	task := &customTasksApi.ApprovalTask{}
+
 	err := r.client.Get(ctx, client.ObjectKey{
 		Namespace: run.Namespace,
 		Name:      makeApprovalTaskName(run),
 	}, task)
-
 	if err != nil {
 		if k8sErrors.IsNotFound(err) {
 			if err = r.createApprovalTask(ctx, run); err != nil {
