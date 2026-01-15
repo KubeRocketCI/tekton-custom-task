@@ -2,15 +2,14 @@ package controller
 
 import (
 	"context"
-	"fmt"
 	"path/filepath"
-	"runtime"
 	"testing"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
 	customTasksApi "github.com/KubeRocketCI/tekton-custom-task/api/v1alpha1"
+	"github.com/KubeRocketCI/tekton-custom-task/pkg/testutils"
 	tektonPipelineApi "github.com/tektoncd/pipeline/pkg/apis/pipeline/v1beta1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -51,8 +50,7 @@ var _ = BeforeSuite(func() {
 			filepath.Join("..", "..", "hack", "crd"),
 		},
 		ErrorIfCRDPathMissing: true,
-		BinaryAssetsDirectory: filepath.Join("..", "..", "bin", "k8s",
-			fmt.Sprintf("1.29.0-%s-%s", runtime.GOOS, runtime.GOARCH)),
+		BinaryAssetsDirectory: testutils.GetFirstFoundEnvTestBinaryDir(),
 	}
 
 	var err error
