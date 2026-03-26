@@ -8,7 +8,7 @@ permissions:
   contents: read
 
 env:
-    GOLANG_VERSION: '1.24'
+    GOLANG_VERSION: '1.25'
 
 jobs:
   prepare-release:
