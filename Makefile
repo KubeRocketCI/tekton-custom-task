@@ -112,7 +112,7 @@ vet: ## Run go vet against code.
 .PHONY: test
 test: setup-envtest
 	KUBEBUILDER_ASSETS="$(shell $(ENVTEST) use $(ENVTEST_K8S_VERSION) --bin-dir $(LOCALBIN) -p path)" \
-	go test ./... -coverprofile=coverage.out `go list ./...`
+	go test ./... -coverprofile=coverage.out
 
 .PHONY: lint
 lint: golangci-lint ## Run golangci-lint linter
@@ -228,7 +228,7 @@ GOLANGCI_LINT_VERSION ?= v2.8.0
 HELMDOCS_VERSION ?= v1.14.2
 GITCHGLOG_VERSION ?= v0.15.4
 CRDOC_VERSION ?= v0.6.4
-OPERATOR_SDK_VERSION ?= v1.41.1
+OPERATOR_SDK_VERSION ?= v1.42.2
 
 ## Tool Binaries
 KUBECTL ?= kubectl
