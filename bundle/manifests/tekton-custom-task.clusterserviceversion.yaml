@@ -18,10 +18,10 @@ metadata:
         }
       ]
     capabilities: Basic Install
-    createdAt: "2025-04-02T17:48:09Z"
-    operators.operatorframework.io/builder: operator-sdk-v1.39.2
+    createdAt: "2026-08-10T10:29:59Z"
+    operators.operatorframework.io/builder: operator-sdk-v1.42.3
     operators.operatorframework.io/project_layout: go.kubebuilder.io/v4
-  name: tekton-custom-task.v0.1.0
+  name: tekton-custom-task.v0.3.0
   namespace: placeholder
 spec:
   apiservicedefinitions: {}
@@ -127,31 +127,7 @@ spec:
             spec:
               containers:
               - args:
-                - --secure-listen-address=0.0.0.0:8443
-                - --upstream=http://127.0.0.1:8080/
-                - --logtostderr=true
-                - --v=0
-                image: gcr.io/kubebuilder/kube-rbac-proxy:v0.16.0
-                name: kube-rbac-proxy
-                ports:
-                - containerPort: 8443
-                  name: https
-                  protocol: TCP
-                resources:
-                  limits:
-                    cpu: 500m
-                    memory: 128Mi
-                  requests:
-                    cpu: 5m
-                    memory: 64Mi
-                securityContext:
-                  allowPrivilegeEscalation: false
-                  capabilities:
-                    drop:
-                    - ALL
-              - args:
-                - --health-probe-bind-address=:8081
-                - --metrics-bind-address=127.0.0.1:8080
+                - --metrics-bind-address=:8443
                 - --leader-elect
                 command:
                 - /manager
@@ -183,6 +159,8 @@ spec:
                     - ALL
               securityContext:
                 runAsNonRoot: true
+                seccompProfile:
+                  type: RuntimeDefault
               serviceAccountName: tekton-custom-task-controller-manager
               terminationGracePeriodSeconds: 10
       permissions:
@@ -248,4 +226,4 @@ spec:
   provider:
     name: KubeRocketCI
     url: https://docs.kuberocketci.io
-  version: 0.1.0
+  version: 0.3.0
