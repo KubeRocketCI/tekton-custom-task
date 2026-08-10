@@ -10,6 +10,9 @@ updates:
     schedule:
       interval: "weekly"
     commit-message:
-      prefix: "chore: "
+      # A prefix ending in punctuation is used verbatim and suppresses the scope,
+      # yielding "chore: bump x" which the pr.yaml commit-format check rejects.
+      prefix: "chore"
+      include: "scope"
     # only require security updates
     open-pull-requests-limit: 0

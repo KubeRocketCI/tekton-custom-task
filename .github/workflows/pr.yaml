@@ -29,7 +29,8 @@ jobs:
       - name: Check Commit Format
         uses: gsactions/commit-message-checker@v2
         with:
-          pattern: '^(EPMDEDP-\d+: (fix|feat|docs|style|refactor|test|chore)(!)?: .+|(chore|build)\(deps\): bump .+)$'
+          # Dependabot infers Bump/bump capitalization from recent history, so accept both.
+          pattern: '^(EPMDEDP-\d+: (fix|feat|docs|style|refactor|test|chore)(!)?: .+|(chore|build)\(deps(-dev)?\): [Bb]ump .+)$'
           error: 'Your commit message should be in the format "EPMDEDP-ID: type: Description". Example: "EPMDEDP-16058: feat: add feature"'
           excludeDescription: 'true'
           excludeTitle: 'true'
@@ -39,7 +40,8 @@ jobs:
       - name: Check Line Length
         uses: gsactions/commit-message-checker@v2
         with:
-          pattern: '^.{10,85}$'
+          # Dependabot subjects carry long module paths and cannot be shortened by hand.
+          pattern: '^((chore|build)\(deps(-dev)?\): .+|.{10,85})$'
           error: 'The maximum line length of 85 characters is exceeded.'
           excludeDescription: 'true'
           excludeTitle: 'true'
