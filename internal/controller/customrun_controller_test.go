@@ -16,6 +16,7 @@ import (
 var _ = Describe("CodebaseIntegration controller", func() {
 	It("Should create ApprovalTask", func() {
 		By("Creating CustomRun object")
+
 		run := &tektonPipelineApi.CustomRun{
 			ObjectMeta: metav1.ObjectMeta{
 				Name:      "test-custom-run1",
@@ -52,8 +53,10 @@ var _ = Describe("CodebaseIntegration controller", func() {
 			g.Expect(task.GetLabels()).Should(Equal(getCustomRunLabels(run)))
 		}).WithTimeout(time.Second * 20).WithPolling(time.Second).Should(Succeed())
 	})
+
 	testApprovalTaskAction := func(runName, action, comment, approvedValue string, shouldSucceed bool) {
 		By("Creating CustomRun object")
+
 		run := &tektonPipelineApi.CustomRun{
 			ObjectMeta: metav1.ObjectMeta{
 				Name:      runName,
@@ -69,6 +72,7 @@ var _ = Describe("CodebaseIntegration controller", func() {
 		Expect(k8sClient.Create(ctx, run)).Should(Succeed())
 		Eventually(func(g Gomega) {
 			By("Getting ApprovalTask")
+
 			task := &customTasksApi.ApprovalTask{}
 			err := k8sClient.Get(ctx, types.NamespacedName{Name: makeApprovalTaskName(run), Namespace: ns}, task)
 			g.Expect(err).ShouldNot(HaveOccurred())
@@ -84,6 +88,7 @@ var _ = Describe("CodebaseIntegration controller", func() {
 		By("Checking CustomRun completion")
 		Eventually(func(g Gomega) {
 			By("Getting CustomRun")
+
 			createdRun := &tektonPipelineApi.CustomRun{}
 			err := k8sClient.Get(ctx, types.NamespacedName{Name: run.Name, Namespace: ns}, createdRun)
 
@@ -94,6 +99,7 @@ var _ = Describe("CodebaseIntegration controller", func() {
 			g.Expect(createdRun.Status.Results[0].Value).Should(Equal(approvedValue))
 		}).WithTimeout(time.Second * 20).WithPolling(time.Second).Should(Succeed())
 	}
+
 	It("Should process CustomRun with approve ApprovalTask", func() {
 		testApprovalTaskAction("test-custom-run", customTasksApi.TaskApproved, "ok", "true", true)
 	})
@@ -102,6 +108,7 @@ var _ = Describe("CodebaseIntegration controller", func() {
 	})
 	It("Should cancel ApprovalTask after canceling CustomRun", func() {
 		By("Creating CustomRun object")
+
 		run := &tektonPipelineApi.CustomRun{
 			ObjectMeta: metav1.ObjectMeta{
 				Name:      "test-custom-run-canceled",
@@ -133,6 +140,7 @@ var _ = Describe("CodebaseIntegration controller", func() {
 		By("Checking ApprovalTask cancellation")
 		Eventually(func(g Gomega) {
 			By("Getting ApprovalTask")
+
 			task := &customTasksApi.ApprovalTask{}
 			err := k8sClient.Get(ctx, types.NamespacedName{Name: makeApprovalTaskName(run), Namespace: ns}, task)
 			g.Expect(err).ShouldNot(HaveOccurred())
@@ -141,6 +149,7 @@ var _ = Describe("CodebaseIntegration controller", func() {
 		By("Checking CustomRun completion")
 		Eventually(func(g Gomega) {
 			By("Getting CustomRun")
+
 			createdRun := &tektonPipelineApi.CustomRun{}
 			err := k8sClient.Get(ctx, types.NamespacedName{Name: run.Name, Namespace: ns}, createdRun)
 
@@ -153,6 +162,7 @@ var _ = Describe("CodebaseIntegration controller", func() {
 	})
 	It("Should skip CustomRun without ApprovalTask ref", func() {
 		By("Creating CustomRun object")
+
 		run := &tektonPipelineApi.CustomRun{
 			ObjectMeta: metav1.ObjectMeta{
 				Name:      "test-custom-run-without-approval-task-ref",
